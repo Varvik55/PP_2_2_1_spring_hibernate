@@ -16,23 +16,23 @@ public class UserDaoImp implements UserDao {
    private SessionFactory sessionFactory;
 
    @Override
-   public void add(User user, Car car) {
+   public void add(User user) {
       sessionFactory.getCurrentSession().save(user);
-      sessionFactory.getCurrentSession().save(car);
 
    }
    @Override
    @SuppressWarnings("unchecked")
    public List<User> listUsers() {
-      TypedQuery<User> query=sessionFactory.getCurrentSession().createQuery("from User");
+      TypedQuery<User> query=sessionFactory.getCurrentSession().createQuery(" SELECT DISTINCT u FROM User u LEFT JOIN fetch u.car");
       return query.getResultList();
    }
 
    @Override
-   public List <User> lastUserByModel(String nameModel) {
+   public List <User> lastUserByModel(String nameModel,int nameSeries) {
       TypedQuery <User> qury = sessionFactory.openSession()
-              .createQuery("SELECT u FROM User u JOIN u.car c WHERE c.model = :nameModel");
+              .createQuery("SELECT u FROM User u JOIN fetch u.car c WHERE c.model = :nameModel and c.series = :nameSeries");
       qury.setParameter("nameModel",nameModel);
+      qury.setParameter("nameSeries",nameSeries);
       return qury.getResultList();
    }
 
